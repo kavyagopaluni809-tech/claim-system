@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.healthcare.claims.entity.Patient;
+import com.healthcare.claims.dto.PatientRequestDTO;
+import com.healthcare.claims.dto.PatientResponseDTO;
 import com.healthcare.claims.service.PatientService;
 
 @RestController
@@ -26,28 +27,28 @@ public class PatientController {
     private PatientService patientService;
 
     @PostMapping("/create")
-    public ResponseEntity<Patient> createPatient(@RequestBody Patient patient)
+    public ResponseEntity<PatientResponseDTO> createPatient(@RequestBody PatientRequestDTO patientRequestDTO)
     {
-      Patient createdPatient= patientService.createPatient(patient);
+      PatientResponseDTO createdPatient= patientService.createPatient(patientRequestDTO);
       return new ResponseEntity<>(createdPatient,HttpStatus.CREATED);
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<Patient>> getAllPatients()
+    public ResponseEntity<List<PatientResponseDTO>> getAllPatients()
     {
         return new ResponseEntity<>(patientService.getAllPatients(),HttpStatus.OK);
     }
 
     @GetMapping("/getById/{id}")
-    public ResponseEntity<Patient> getPatientById(@PathVariable Long id)
+    public ResponseEntity<PatientResponseDTO> getPatientById(@PathVariable Long id)
     {
         return new ResponseEntity<>(patientService.getPatientById(id),HttpStatus.OK);
     }
     
     @PutMapping("/update")
-    public ResponseEntity<Patient> updatePatient(@RequestBody Patient patient,Long id)
+    public ResponseEntity<PatientResponseDTO> updatePatient(@RequestBody PatientRequestDTO patientRequestDTO,Long id)
     {
-       return new ResponseEntity<>(patientService.updatePatient(patient, id),HttpStatus.OK);
+       return new ResponseEntity<>(patientService.updatePatient(patientRequestDTO, id),HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")

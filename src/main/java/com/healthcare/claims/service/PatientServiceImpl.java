@@ -1,11 +1,15 @@
 
 package com.healthcare.claims.service;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.healthcare.claims.dto.PatientRequestDTO;
+import com.healthcare.claims.dto.PatientResponseDTO;
 import com.healthcare.claims.entity.Patient;
+import com.healthcare.claims.mapper.PatientMapper;
 import com.healthcare.claims.repository.PatientRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,36 +23,41 @@ public class PatientServiceImpl implements PatientService
    
 
 @Override
-    public Patient createPatient(Patient patient) {
+    public PatientResponseDTO createPatient(PatientRequestDTO patientRequestDTO) {
+        Patient patient = PatientMapper.toEntity(patientRequestDTO);
         Patient savedPatient = null;
         if(patient.getStatus().equals("ACTIVE")) {
             savedPatient = patientRepository.save(patient);
         }
-        return savedPatient;
+        return PatientMapper.toDTO(savedPatient);
     }
 
     
 
     @Override
-    public List<Patient> getAllPatients() {
-       return patientRepository.findAll();
+    public List<PatientResponseDTO> getAllPatients() {
+       return patientRepository.findAll()
+       .stream()
+       .map(PatientMapper::toDTO)
+       .collect(Collectors.toList());
         
     }
 
     @Override
-    public Patient getPatientById(Long id) {
-        return patientRepository.findById(id).orElseThrow(()->new RuntimeException("Patient not found with id"));
+    public PatientResponseDTO getPatientById(Long id) {
+        Patient patient= patientRepository.findById(id).orElseThrow(()->new RuntimeException("Patient not found with id"));
+        return PatientMapper.toDTO(patient);
     }
 
     @Override
-    public Patient updatePatient(Patient patient,Long id)
+    public PatientResponseDTO updatePatient(PatientRequestDTO patientRequestDTO,Long id)
 {
 Patient existingPatient=patientRepository.findById(id).orElseThrow(()->new RuntimeException("Patient not found with id"));
-existingPatient.setFirstName(patient.getFirstName());
-existingPatient.setLastName(patient.getLastName());
-existingPatient.setEmail(patient.getEmail());
-existingPatient.setPhoneNumber(patient.getPhoneNumber());
-return patientRepository.save(existingPatient);
+existingPatient.setFirstName(patientRequestDTO.getFirstName());
+existingPatient.setLastName(patientRequestDTO.getLastName());
+existingPatient.setEmail(patientRequestDTO.getEmail());
+existingPatient.setPhoneNumber(patientRequestDTO.getPhoneNumber());
+return PatientMapper.toDTO(patientRepository.save(existingPatient));
 }
 
 
