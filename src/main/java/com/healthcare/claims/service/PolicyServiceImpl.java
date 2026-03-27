@@ -66,7 +66,7 @@ public class PolicyServiceImpl implements PolicyService{
 
     @Override
     public String deletePolicyById(Long Id) {
-      Policy policy  =policyRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Policy not found with given Id"));
+      Policy policy  =policyRepository.findById(Id).orElseThrow(()->new ResourceNotFoundException("Policy not found with given Id"));
       policyRepository.delete(policy);
       return "Policy deleted successfully";
     }
