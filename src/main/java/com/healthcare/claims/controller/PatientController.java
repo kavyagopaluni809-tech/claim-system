@@ -3,6 +3,7 @@ package com.healthcare.claims.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.healthcare.claims.dto.PatientRequestDTO;
@@ -55,5 +57,17 @@ public class PatientController {
     public ResponseEntity<String> deletePatient(@PathVariable Long id)
     {
         return new ResponseEntity<>(patientService.deletePatient(id),HttpStatus.OK);
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<PatientResponseDTO>> getPatients(@RequestParam(defaultValue = "0") int pageNum, @RequestParam(defaultValue = "10") int pageSize)
+    {
+       return new ResponseEntity<>(patientService.getPatients(pageNum, pageSize),HttpStatus.OK); 
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<PatientResponseDTO>> searchPatients(@RequestParam String name, @RequestParam(defaultValue="0") int pageNum, @RequestParam(defaultValue = "10") int pageSize)
+    {
+        return new ResponseEntity<>(patientService.searchPatients(name, pageNum, pageSize),HttpStatus.OK);
     }
 }

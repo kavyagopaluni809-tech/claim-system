@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.healthcare.claims.dto.PolicyRequestDTO;
@@ -14,6 +16,7 @@ import com.healthcare.claims.exception.ResourceNotFoundException;
 import com.healthcare.claims.mapper.PolicyMapper;
 import com.healthcare.claims.repository.PatientRepository;
 import com.healthcare.claims.repository.PolicyRepository;
+import org.springframework.data.domain.Pageable;
 
 import lombok.RequiredArgsConstructor;
 @Service
@@ -78,5 +81,22 @@ public class PolicyServiceImpl implements PolicyService{
         .map(policy->PolicyMapper.toDTO(policy,patient))
         .collect(Collectors.toList());
     }
+
+    @Override
+    public Page<PolicyResponseDTO> searchPolicies(String name, int pageNum, int pageSize) {
+      Pageable pageable = PageRequest.of(pageNum, pageSize);
+      return policyRepository.findByPolicyNameContainingIgnoreCase(name, pageable)
+                            .map(policy -> PolicyMapper.toDTO(policy, policy.getPatient()));
+    }
+
+    @Override
+    public Page<PolicyResponseDTO> getPolicies(int pageNum,int pageSize)
+    {
+       Pageable pageable = PageRequest.of(pageNum, pageSize);
+       return policyRepository.findAll(pageable)
+                              .map(policy -> PolicyMapper.toDTO(policy, policy.getPatient()));
+    } 
+      
+    
     
 }
